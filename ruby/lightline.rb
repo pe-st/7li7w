@@ -17,36 +17,31 @@
 #
 
 class LightLineCard
-  attr_accessor :card_name, :a, :b, :c, :d, :e, :f
+  attr_accessor :card_name, :connectors
+  COLORS = [:yellow, :red, :blue, :green, :black]
 
-  def initialize(name)
+  def initialize(name, connections = {})
     @card_name = name
-    @a = [nil, nil]
-    @b = [nil, nil]
-    @c = [nil, nil]
-    @d = [nil, nil]
-    @e = [nil, nil]
-    @f = [nil, nil]
+    @connectors = {}
+
+    COLORS.each do |c|
+      unless connections[c] == nil
+        connectors[ connections[c][0] ] = c
+        connectors[ connections[c][1] ] = c
+      end
+    end
   end
 
   def print
-    puts "         #{@a[0]} #{@b[0]} #{@c[0]}"
-    puts "#{@f[1]}                             #{@d[0]}"
-    puts "#{@e[1]}                             #{@e[0]}"
-    puts "#{@d[1]}                             #{@f[0]}"
-    puts "         #{@c[1]} #{@b[1]} #{@a[1]}"
+    puts "         |#{@connectors[:a1]}| |#{@connectors[:b1]}| |#{@connectors[:c1]}|"
+    puts "|#{@connectors[:f2]}|                             |#{@connectors[:d1]}|"
+    puts "|#{@connectors[:e2]}|                             |#{@connectors[:e1]}|"
+    puts "|#{@connectors[:d2]}|                             |#{@connectors[:f1]}|"
+    puts "         |#{@connectors[:c2]}| |#{@connectors[:b2]}| |#{@connectors[:a2]}|"
   end
 
 end
 
 card = []
-card[0] = LightLineCard.new("1")
-card[0].b[0] = :yellow
-card[0].b[1] = :yellow
-card[0].c[0] = :green
-card[0].a[1] = :green
-card[0].e[0] = :blue
-card[0].e[1] = :blue
-card[0].c[1] = :red
-card[0].d[1] = :red
+card[0] = LightLineCard.new("1", {:yellow => [:b1, :b2], :green => [:c1, :a2], :blue => [:e1, :e2], :red => [:c2, :d2]})
 card[0].print
