@@ -94,23 +94,20 @@ card[11] = LightLineCard.new("12", {:black => [:f1, :d2], :green => [:c2, :a1], 
 #     6     216
 #     7     760
 #     8    2725
-#     9    9910  (took  18s)
-#    10   36446  (took 279s)
-#    11
+#     9    9910  (took   18s)
+#    10   36446  (took  279s)
+#    11  135268  (took 4791s)
 #    12
 
-NUMBER_OF_CARDS = 10
+NUMBER_OF_CARDS = 5
 
 require 'set'
 $layoutset = Set.new
 
 def test_place(cards, coords)
-  # puts "test_place #{cards} #{coords}"
   return false if coords[1] < '0'
   return false if coords[1] == '0' && coords[0] < 'k'
-  # puts coords.join
   return false if cards.include? coords.join
-  # puts "#{coords.join} is ok"
   return true
 end
 
@@ -135,23 +132,26 @@ end
 
 # recursive function: finds all valid places for the next card and tries each of them recursively
 def layouts(cards, remaining)
+  # very simple progress indicator, choosing length 4 empirically (less than one line of dots: 32 dots)
+  print "." if cards.size == 4
+
   # puts "#{remaining}: #{cards}"
   if remaining > 0
     valid_places = find_possible_places(cards)
-    # puts "valid places: #{valid_places}"
     valid_places.each do |place|
       cards_copy = cards.map {|e| e.dup}
       layouts(cards_copy.push(place), remaining - 1)
-#      layouts(cards.sort.push(place), remaining - 1)
     end
   else
     # end the recursion, put the result in the set
     layout_id = cards.sort.inject("") {|s, place| s + place}
     $layoutset.add(layout_id)
-    # puts "#{layout_id}, total #{$layoutset.size} layouts"
   end
 end
 
 layouts(["k0"], NUMBER_OF_CARDS - 1)
 puts $layoutset.size
+if $layoutset.size < 100
+  puts $layoutset.to_a.sort
+end
 
